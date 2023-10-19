@@ -1,4 +1,4 @@
-console.log('playerloaded');
+// console.log('playerloaded');
 
 const ctx = canvas.getContext('2d');
 
@@ -6,6 +6,11 @@ class CharacterSprite {
     constructor(x, y) {
         this.x = x;
         this.y = y;
+        this.vx = 5; // horizontal velocity
+        this.vy = 0; // vertical velocity
+        this.isJumping = false;
+        this.gravity = 0.5;
+        this.jumpStrength = -10; // negative because canvas Y is inverted
     }
 
     draw(ctx) {
@@ -58,7 +63,33 @@ class CharacterSprite {
     // ctx.fillStyle = 'white';
     // ctx.fillText('1', this.x-8, this.y-4);
 
-}
+    }
+
+    update() {
+        // Gravity effect
+        this.vy += this.gravity;
+
+        this.y += this.vy;
+        if (this.y > canvas.height - 25) {
+            this.y = canvas.height - 25;
+            this.isJumping = false;
+        }
+    }
+    
+    moveLeft() {
+        this.x -= this.vx;
+    }
+
+    moveRight() {
+        this.x += this.vx;
+    }
+
+    jump() {
+        if (!this.isJumping) {
+            this.vy = this.jumpStrength;
+            this.isJumping = true;
+        }
+    }
 
 }
 
