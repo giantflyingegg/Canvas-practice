@@ -1,16 +1,22 @@
-// console.log('playerloaded');
 
 const ctx = canvas.getContext('2d');
+console.log('playerloaded');
 
 class CharacterSprite {
-    constructor(x, y) {
+    constructor(x, y, initials = '') {
         this.x = x;
         this.y = y;
-        this.vx = 5; // horizontal velocity
+        this.vx = 0; // horizontal velocity
         this.vy = 0; // vertical velocity
         this.isJumping = false;
         this.gravity = 0.5;
         this.jumpStrength = -10; // negative because canvas Y is inverted
+        this.initials = initials;
+    }
+
+    //set initials
+    setInitials(initials) {
+        this.initials = initials;
     }
 
     draw(ctx) {
@@ -58,10 +64,10 @@ class CharacterSprite {
     ctx.fill(); 
     ctx.closePath();
 
-    // //shell initials
-    // ctx.font = '24px Arial';
-    // ctx.fillStyle = 'white';
-    // ctx.fillText('1', this.x-8, this.y-4);
+    //shell initials
+    ctx.font = '20px Arial';
+    ctx.fillStyle = 'white';
+    ctx.fillText(`${this.initials}`, this.x-12, this.y-4);
 
     }
 
@@ -74,14 +80,25 @@ class CharacterSprite {
             this.y = canvas.height - 25;
             this.isJumping = false;
         }
+
+        // Add horizontal movement
+        this.x += this.vx;
+
+        // Ensure character stays within canvas bounds (optional)
+        if (this.x < 25) this.x = 25;
+        if (this.x > canvas.width - 25) this.x = canvas.width - 25;
     }
     
     moveLeft() {
-        this.x -= this.vx;
+        this.vx = -10;
     }
 
     moveRight() {
-        this.x += this.vx;
+        this.vx = 10;
+    }
+
+    stopHorizontalMovement() {
+        this.vx = 0; // sets horizontal velocity to 0
     }
 
     jump() {
