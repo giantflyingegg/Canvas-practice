@@ -3,7 +3,7 @@ console.log('platforms loaded');
 const ctx = canvas.getContext('2d');
 
 class Platform {
-    constructor(x, y, width, height, color = "#ffffff") {  // default brown color
+    constructor(x, y, width, height, color = "white") { 
         this.x = x;
         this.y = y;
         this.width = width;

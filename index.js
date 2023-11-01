@@ -5,10 +5,35 @@ import Platform from './js/platforms.js';
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
+function restartGame() {
+    console.log('restart game');
+    // Reset player character state
+    myCharacter.x = 40;
+    myCharacter.y = 640;
+    myCharacter.vx = 0;
+    myCharacter.vy = 0;
+    // ... reset any other necessary state ...
+
+    // Hide end game modal
+    endGameModal.style.display = 'none';
+
+    // Restart the game loop
+    isGameOver = false;
+    draw();
+}
+
+
 //start screen variables
 const initialsInput = document.getElementById('initialsInput');
 const welcomeScreen = document.getElementById('welcomeScreen');
 const startButton = document.getElementById('startButton');
+const endGameModal = document.getElementById('endGameModal');
+const endGameMessage = document.getElementById('endGameMessage');
+const closeBtn = document.getElementById('closeBtn');
+const restartBtn = document.getElementById('restartBtn');
+
+restartBtn.addEventListener('click', restartGame);
+closeBtn.addEventListener('click', () => endGameModal.style.display = 'none');
 startButton.addEventListener('click', startGame);
 
 //Set background image
@@ -29,7 +54,7 @@ const platforms = [
     new Platform(0, 660, 200, 20),
     new Platform(300, 660, 200, 20),
     new Platform(600, 660, 200, 20),
-    new Platform(1080, 660, 200, 20)
+    new Platform(880, 660, 400, 20)
 ]
 
 //add event listener for keydown
@@ -59,16 +84,29 @@ document.addEventListener('keyup', (e) => {
     }
 });
 
+let isGameOver = false;
 
 function draw() {
         console.log('draw');
+        if (isGameOver) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
         for (let platform of platforms) {
             platform.draw(ctx);
         }
-        myCharacter.update();
+        myCharacter.update(platforms);
         myCharacter.draw(ctx);
+        
+        // Check if player has fallen off the screen
+        if (myCharacter.y > canvas.height) {
+            endGameFallOff();
+        }
+        
+        // Check if player has reached the end of the level
+        if (myCharacter.x > 1280) {
+        endGameTouchRight();
+    }
+
         requestAnimationFrame(draw);
     }
 
@@ -93,7 +131,20 @@ function initGame(initials) {
 }
 
 welcomeScreen.style.display = 'block';
-// draw();
+
+function endGameFallOff() {
+    isGameOver = true;
+    console.log('Game Over: You fell off!');
+    endGameMessage.textContent = 'Game Over: You fell off!';
+    endGameModal.style.display = 'block';
+}
+
+function endGameTouchRight() {
+    isGameOver = true;
+    console.log('You Win: You reached the end!');
+    endGameMessage.textContent = 'You Win: You reached the end!';
+    endGameModal.style.display = 'block';
+}
 
 
 

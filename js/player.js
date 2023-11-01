@@ -71,22 +71,44 @@ class CharacterSprite {
 
     }
 
-    update() {
+    update(platforms) {
         // Gravity effect
         this.vy += this.gravity;
-
+    
+        // Add horizontal movement
+        this.x += this.vx;
+    
+        // Check collisions with platforms
+        for (let platform of platforms) {
+            if (
+                this.x - 25 < platform.x + platform.width &&
+                this.x + 25 > platform.x &&
+                this.y + 25 > platform.y &&
+                this.y < platform.y + platform.height
+            ) {
+                this.y = platform.y - 25;
+                this.isJumping = false;
+                this.vy = 0;  // stop vertical movement
+            }
+        }
+    
         this.y += this.vy;
+    
+        // Ensure character stays within canvas bounds
+        if (this.x < 25) this.x = 25;
+        if (this.x > canvas.width - 25) this.x = canvas.width - 25;
         if (this.y > canvas.height - 25) {
             this.y = canvas.height - 25;
             this.isJumping = false;
+            endGameFallOff();  // Call the end game function for falling off
+            return; // Stop further updates after end game state
         }
-
-        // Add horizontal movement
-        this.x += this.vx;
-
-        // Ensure character stays within canvas bounds (optional)
-        if (this.x < 25) this.x = 25;
-        if (this.x > canvas.width - 25) this.x = canvas.width - 25;
+    
+        // Check if the player touches the right hand end of the screen
+        if (this.x + 25 > canvas.width) {
+            endGameTouchRight();
+            return; // Stop further updates after end game state
+        }
     }
     
     moveLeft() {
@@ -109,5 +131,4 @@ class CharacterSprite {
     }
 
 }
-
 export default CharacterSprite;
